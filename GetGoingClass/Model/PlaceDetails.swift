@@ -29,6 +29,9 @@ class PlaceDetails: NSObject, NSCoding {
     var address: String? {
         return formattedAddress ?? vicinity
     }
+    var placeId: String?
+    var phone: String?
+    var website: String?
 
     //MARK: - NSCoding
     func encode(with aCoder: NSCoder) {
@@ -66,11 +69,14 @@ class PlaceDetails: NSObject, NSCoding {
     init?(json: [String: Any]) {
         guard let id = json["id"] as? String else { return nil }
         self.id = id
-
+        
         self.name = json["name"] as? String
         self.vicinity = json["vicinity"] as? String
         self.formattedAddress = json["formatted_address"] as? String
         self.rating = json["rating"] as? Double
         self.icon = json["icon"] as? String
+        self.phone = json["formatted_phone_number"] as? String
+        self.website = json["website"] as? String
+        self.placeId = json["place_id"] as? String
     }
 }

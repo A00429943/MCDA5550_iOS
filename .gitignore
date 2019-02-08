@@ -1,3 +1,4 @@
+.DS_Store
 ## Build generated
 build/
 DerivedData/
@@ -12,5 +13,5 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
-
+/Users/maninder/Downloads/GetGoing 
 

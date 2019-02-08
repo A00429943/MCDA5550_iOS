@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		021EAD6A220E05FE00D57D42 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021EAD69220E05FE00D57D42 /* DetailsViewController.swift */; };
 		5D2F889321FFBE930040F2D5 /* RatingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F889221FFBE930040F2D5 /* RatingControl.swift */; };
 		5D2F88982202606E0040F2D5 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F88972202606E0040F2D5 /* LocationService.swift */; };
 		5D83998F21EFE1D90040821A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D83998E21EFE1D90040821A /* AppDelegate.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		021EAD69220E05FE00D57D42 /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		5D2F889221FFBE930040F2D5 /* RatingControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingControl.swift; sourceTree = "<group>"; };
 		5D2F88972202606E0040F2D5 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		5D83998B21EFE1D90040821A /* GetGoingClass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GetGoingClass.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +119,7 @@
 				5D8399A121EFFE2D0040821A /* SearchViewController.swift */,
 				5DEA834221F9354500D4A772 /* SearchResultsViewController.swift */,
 				5DE95A772208E9F80097DDDB /* FiltersViewController.swift */,
+				021EAD69220E05FE00D57D42 /* DetailsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -240,6 +243,7 @@
 				5D8399C721F691F80040821A /* GooglePlacesAPI.swift in Sources */,
 				5D2F889321FFBE930040F2D5 /* RatingControl.swift in Sources */,
 				5DE95A782208E9F80097DDDB /* FiltersViewController.swift in Sources */,
+				021EAD6A220E05FE00D57D42 /* DetailsViewController.swift in Sources */,
 				5DEA834721F937D200D4A772 /* SearchResultTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

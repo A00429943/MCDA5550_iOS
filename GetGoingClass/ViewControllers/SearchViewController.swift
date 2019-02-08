@@ -83,8 +83,6 @@ class SearchViewController: UIViewController {
                 let results = APIParser.parseNearbySearchResults(jsonObj: jsonObj)
 
                 if results.isEmpty {
-                    // TODO: - Present an alert
-                    // On the main thread!
                     DispatchQueue.main.async {
                         self.presentErrorAlert(message: "No results")
                     }
@@ -103,8 +101,6 @@ class SearchViewController: UIViewController {
                 let results = APIParser.parseNearbySearchResults(jsonObj: jsonObj)
 
                 if results.isEmpty {
-                    // TODO: - Present an alert
-                    // On the main thread!
                     DispatchQueue.main.async {
                         self.presentErrorAlert(message: "No results")
                     }
@@ -122,6 +118,7 @@ class SearchViewController: UIViewController {
         guard let searchResultsViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SearchResultsViewController") as? SearchResultsViewController else { return }
 
         searchResultsViewController.places = places
+
         DispatchQueue.main.async {
             self.navigationController?.pushViewController(searchResultsViewController, animated: true)
         }

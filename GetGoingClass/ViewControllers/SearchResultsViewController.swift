@@ -8,21 +8,24 @@
 
 import UIKit
 
+
 class SearchResultsViewController: UIViewController {
 
     // MARK: - Outlets
 
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var tableView: UITableView!
-
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    
     //MARK: - Properties
 
     var places: [PlaceDetails]!
-
+    
     // MARK: - View Controller
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        activityIndicator.isHidden = true
         tableView.dataSource = self
         tableView.delegate = self
 
@@ -30,7 +33,29 @@ class SearchResultsViewController: UIViewController {
         tableView.register(nib, forCellReuseIdentifier: "SearchResultTableViewCell")
     }
     
-
+    @IBAction func segmentedObserver(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            self.places.sort(by: {$0.name! < $1.name!})
+            self.tableView.reloadData()
+        case 1:
+            self.places.sort(by: {$0.rating! > $1.rating!})
+            self.tableView.reloadData()
+        default:
+            break
+        }
+    }
+    
+    func showActivityIndicator() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    
+    func hideActivityIndicator() {
+        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
+    }
+    
     /*
     // MARK: - Navigation
 
@@ -69,8 +94,53 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
         cell.iconImageView.image = UIImage(data: imageData)
         return cell
     }
+    
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("row was selected at \(indexPath.section) \(indexPath.row)")
+        
+        let placeId = places[indexPath.row].placeId
+        
+        showActivityIndicator()
+        if placeId == nil {
+            self.showAlert(message: "No results")
+            return
+        }
+        GooglePlacesAPI.requestPlaceDetails(placeId!) { (status, json) in
+            print(json ?? "")
+            DispatchQueue.main.async {
+                self.hideActivityIndicator()
+            }
+            guard let jsonObj = json else { return }
+            
+            let result = APIParser.parsePlaceDetails(jsonObj: jsonObj)
+            if result == nil {
+                // make it run in main thread
+                DispatchQueue.main.async {
+                    self.showAlert(message: "No results")
+                }
+            } else {
+                self.showPlaceDetailsResult(details: result!)
+            }
+        }
+    }
+    
+    func showAlert(title: String = "Error", message: String?){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        let okButton = UIAlertAction(title: "Ok", style: .default, handler: nil)
+        
+        alert.addAction(okButton)
+        present(alert, animated: true)
+    }
+    
+    func showPlaceDetailsResult(details: PlaceDetails) {
+        guard let detailsViewController = self.storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController else { return }
+        
+        detailsViewController.details = details
+        
+        DispatchQueue.main.async {
+            self.navigationController?.pushViewController(detailsViewController, animated: true)
+        }
     }
 }

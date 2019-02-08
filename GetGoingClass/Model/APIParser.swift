@@ -23,4 +23,13 @@ class APIParser {
         }
         return places
     }
+    
+    class func parsePlaceDetails(jsonObj: [String:Any]) -> PlaceDetails? {
+        if let result = jsonObj["result"] as? [String: Any]{
+            if let place = PlaceDetails(json: result) {
+                return place
+            }
+        }
+        return nil
+    }
 }
