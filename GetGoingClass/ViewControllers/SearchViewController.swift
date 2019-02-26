@@ -10,48 +10,49 @@ import UIKit
 import CoreLocation
 
 class SearchViewController: UIViewController {
-
+    
     // MARK: - Outlets
-
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var segmentControl: UISegmentedControl!
     @IBOutlet weak var searchButton: UIButton!
-
+    @IBOutlet weak var filtersButton: UIButton!
+    
     // MARK: - Properties
     var searchParameter: String?
     var currentLocation: CLLocationCoordinate2D?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         activityIndicator.isHidden = true
         searchTextField.delegate = self
     }
-
+    
     //MARK: - Activity Indicator
-
+    
     func showActivityIndicator() {
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
         searchButton.isEnabled = false
     }
-
+    
     func hideActivityIndicator() {
         activityIndicator.stopAnimating()
         activityIndicator.isHidden = true
         searchButton.isEnabled = true
     }
-
+    
     @IBAction func loadLastSavedResults(_ sender: UIButton) {
         
     }
-
+    
     @IBAction func presentFilters(_ sender: UIButton) {
-//        performSegue(withIdentifier: "FiltersSegue", sender: self)
         guard let filtersViewController = UIStoryboard(name: "Filters", bundle: nil).instantiateViewController(withIdentifier: "FiltersViewController") as? FiltersViewController else { return }
+        filtersViewController.delegate = self
         present(filtersViewController, animated: true, completion: nil)
-
+        
     }
     
     @IBAction func segmentedObserver(_ sender: UISegmentedControl) {
@@ -61,17 +62,17 @@ class SearchViewController: UIViewController {
             LocationService.shared.delegate = self
         }
     }
-
+    
     @IBAction func searchButtonAction(_ sender: UIButton) {
         print("search button was tapped")
         guard let query = searchTextField.text else {
             print("query is nil")
             return
         }
-
+        
         searchTextField.resignFirstResponder()
         showActivityIndicator()
-
+        
         switch segmentControl.selectedSegmentIndex {
         case 0:
             GooglePlacesAPI.requestPlaces(query) { (status, json) in
@@ -81,7 +82,7 @@ class SearchViewController: UIViewController {
                 }
                 guard let jsonObj = json else { return }
                 let results = APIParser.parseNearbySearchResults(jsonObj: jsonObj)
-
+                
                 if results.isEmpty {
                     DispatchQueue.main.async {
                         self.presentErrorAlert(message: "No results")
@@ -92,14 +93,14 @@ class SearchViewController: UIViewController {
             }
         case 1:
             guard let location = currentLocation else { return }
-            GooglePlacesAPI.requestPlacesNearby(for: location, radius: 10000.0, query) { (status, json) in
+            GooglePlacesAPI.requestPlacesNearby(for: location, radius: Globals.radius, query) { (status, json) in
                 print(json ?? "")
                 DispatchQueue.main.async {
                     self.hideActivityIndicator()
                 }
                 guard let jsonObj = json else { return }
                 let results = APIParser.parseNearbySearchResults(jsonObj: jsonObj)
-
+                
                 if results.isEmpty {
                     DispatchQueue.main.async {
                         self.presentErrorAlert(message: "No results")
@@ -111,33 +112,33 @@ class SearchViewController: UIViewController {
         default:
             break
         }
-
+        
     }
-
+    
     func presentSearchResults(places: [PlaceDetails]) {
         guard let searchResultsViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SearchResultsViewController") as? SearchResultsViewController else { return }
-
+        
         searchResultsViewController.places = places
-
+        
         DispatchQueue.main.async {
             self.navigationController?.pushViewController(searchResultsViewController, animated: true)
         }
     }
-
+    
     func presentErrorAlert(title: String = "Error", message: String?) {
         let alert = UIAlertController(title: title,
                                       message: message,
                                       preferredStyle: .alert)
         let okButtonAction = UIAlertAction(title: "Ok",
-                                     style: .default,
-                                     handler: nil)
+                                           style: .default,
+                                           handler: nil)
         alert.addAction(okButtonAction)
         present(alert, animated: true)
     }
 }
 
 extension SearchViewController: UITextFieldDelegate {
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == searchTextField {
             searchTextField.resignFirstResponder()
@@ -146,7 +147,7 @@ extension SearchViewController: UITextFieldDelegate {
         }
         return false
     }
-
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == searchTextField {
             searchParameter = textField.text
@@ -161,3 +162,17 @@ extension SearchViewController: LocationServiceDelegate {
         currentLocation = location.coordinate
     }
 }
+
+extension SearchViewController: FiltersViewDelegate
+{
+    func filtersViewWillDismiss(filtersViewController: FiltersViewController){
+        // print("delegated")
+        if (Globals.radius == Globals.radiusDefault && Globals.onlyOpenNow == Globals.onlyOpenNowDefault ) {
+            // print("default")
+            filtersButton.setImage(UIImage(named: "filtersDefault"), for: .normal)
+        } else {
+            // print("not default")
+            filtersButton.setImage(UIImage(named: "filters"), for: .normal)
+        } }
+}
+

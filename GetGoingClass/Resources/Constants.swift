@@ -10,8 +10,9 @@ import Foundation
 
 class Constants {
 
-    static let apiKey = ""
 
+    static let apiKey = ""
+    
     static let scheme = "https"
     static let host = "maps.googleapis.com"
     static let textPlaceSearch = "/maps/api/place/textsearch/json"

@@ -19,6 +19,8 @@ class GooglePlacesAPI {
 
         urlComponents.queryItems = [
             URLQueryItem(name: "query", value: query),
+            URLQueryItem(name: "radius", value: "\(Globals.radius)"),
+            URLQueryItem(name: "opennow", value: "\(Globals.onlyOpenNow)"),
             URLQueryItem(name: "key", value: Constants.apiKey)
         ]
         if let url = urlComponents.url {
@@ -34,7 +36,7 @@ class GooglePlacesAPI {
         }
     }
 
-    class func requestPlacesNearby(for coordinate: CLLocationCoordinate2D, radius: Double, _ query: String?, completion: @escaping(_ status: Int, _ json: [String: Any]?) -> Void) {
+    class func requestPlacesNearby(for coordinate: CLLocationCoordinate2D, radius: Int, _ query: String?, completion: @escaping(_ status: Int, _ json: [String: Any]?) -> Void) {
         var urlComponents = URLComponents()
         urlComponents.scheme = Constants.scheme
         urlComponents.host = Constants.host
@@ -42,7 +44,9 @@ class GooglePlacesAPI {
 
         urlComponents.queryItems = [
             URLQueryItem(name: "location", value: "\(coordinate.latitude),\(coordinate.longitude)"),
-            URLQueryItem(name: "radius", value: "\(Int(radius))"),
+            URLQueryItem(name: "radius", value: "\(radius)"),
+            URLQueryItem(name: "opennow", value: "\(Globals.onlyOpenNow)"),
+            URLQueryItem(name: "rankby", value: "\(Globals.rankBy)"),
             URLQueryItem(name: "key", value: Constants.apiKey)
         ]
 

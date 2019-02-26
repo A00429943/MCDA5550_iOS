@@ -10,27 +10,40 @@ import UIKit
 
 
 class SearchResultsViewController: UIViewController {
-
+    
     // MARK: - Outlets
-
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     //MARK: - Properties
-
+    
     var places: [PlaceDetails]!
     
     // MARK: - View Controller
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         activityIndicator.isHidden = true
         tableView.dataSource = self
         tableView.delegate = self
-
+        
         let nib = UINib(nibName: "SearchResultTableViewCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: "SearchResultTableViewCell")
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "MapViewSegue" {
+            if let destination = segue.destination as? MapViewController {
+                destination.placeDetails = places
+            }
+        }
+    }
+    
+    // reference: https://www.raywenderlich.com/462-storyboards-tutorial-for-ios-part-2
+    @IBAction func exitMapView(_ segue: UIStoryboardSegue) {
+        
     }
     
     @IBAction func segmentedObserver(_ sender: UISegmentedControl) {
@@ -39,7 +52,7 @@ class SearchResultsViewController: UIViewController {
             self.places.sort(by: {$0.name! < $1.name!})
             self.tableView.reloadData()
         case 1:
-            self.places.sort(by: {$0.rating! > $1.rating!})
+            self.places.sort(by: {$0.rating ?? 0 > $1.rating ?? 0})
             self.tableView.reloadData()
         default:
             break
@@ -57,26 +70,26 @@ class SearchResultsViewController: UIViewController {
     }
     
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }
 extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSource {
-
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return places.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultTableViewCell") as? SearchResultTableViewCell else { return UITableViewCell() }
         let place = places[indexPath.row]
@@ -95,7 +108,7 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
         return cell
     }
     
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("row was selected at \(indexPath.section) \(indexPath.row)")
         
@@ -140,7 +153,7 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
         detailsViewController.details = details
         
         DispatchQueue.main.async {
-            self.navigationController?.pushViewController(detailsViewController, animated: true)
+        self.navigationController?.pushViewController(detailsViewController, animated: true)
         }
     }
 }

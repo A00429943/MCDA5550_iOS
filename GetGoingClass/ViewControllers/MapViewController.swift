@@ -1,43 +1,39 @@
 //
-//  DetailsViewController.swift
+//  MapViewController.swift
 //  GetGoingClass
 //
-//  Created by Simon Achkar on 2/8/19.
+//  Created by Simon Achkar on 2/25/19.
 //  Copyright © 2019 SMU. All rights reserved.
 //
 
 import UIKit
 import MapKit
 
-class DetailsViewController: UIViewController {
-    
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var websiteLabel: UILabel!
-    @IBOutlet weak var phoneLabel: UILabel!
+class MapViewController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
-    var details: PlaceDetails!
+    var placeDetails: [PlaceDetails]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        titleLabel.text = details.name ?? ""
-        phoneLabel.text = details.phone ?? ""
-        websiteLabel.text = details.website ?? ""
         setMapCoordinate()
     }
     
+ 
+    
     func setMapCoordinate() {
         mapView.delegate = self
-        guard let coordinate = details.coordinate else { print("no coordinate")
-            return }
-        let annotation = MKPointAnnotation()
-        annotation.title = details.name
-        annotation.coordinate = coordinate
-        mapView.addAnnotation(annotation)
-        centerMapOnLocation(location: coordinate)
+        for placeDetail in placeDetails {
+            guard let coordinate = placeDetail.coordinate else { return }
+            let annotation = MKPointAnnotation()
+            annotation.title = placeDetail.name
+            annotation.coordinate = coordinate
+            mapView.addAnnotation(annotation)
+            centerMapOnLocation(location: coordinate)
+        }
         mapView.showsUserLocation = true
     }
+    
     
     func centerMapOnLocation(location: CLLocationCoordinate2D) {
         let radius = 5000
@@ -47,11 +43,9 @@ class DetailsViewController: UIViewController {
         
         mapView.setRegion(region, animated: true)
     }
-    
-    
 }
 
-extension DetailsViewController: MKMapViewDelegate {
+extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
@@ -77,13 +71,3 @@ extension DetailsViewController: MKMapViewDelegate {
         }
     }
 }
-
-
-extension MKAnnotation {
-    func mapItem(coordinate: CLLocationCoordinate2D) -> MKMapItem {
-        let placeMark = MKPlacemark(coordinate: coordinate)
-        return MKMapItem(placemark: placeMark)
-    }
-}
-
-

@@ -7,11 +7,14 @@
 //
 
 import Foundation
+import CoreLocation
 
 class PlaceDetails: NSObject, NSCoding {
     struct PropertyKey {
         static let idKey = "id"
         static let nameKey = "name"
+        static let latitudeKey = "latitude"
+        static let longitudeKey = "longitude"
         static let vicinityKey = "vicinity"
         static let formattedAddressKey = "formattedAddress"
         static let ratingKey = "rating"
@@ -32,6 +35,7 @@ class PlaceDetails: NSObject, NSCoding {
     var placeId: String?
     var phone: String?
     var website: String?
+    var coordinate: CLLocationCoordinate2D?
 
     //MARK: - NSCoding
     func encode(with aCoder: NSCoder) {
@@ -41,7 +45,6 @@ class PlaceDetails: NSObject, NSCoding {
         aCoder.encode(formattedAddress, forKey: PropertyKey.formattedAddressKey)
         aCoder.encode(rating, forKey: PropertyKey.ratingKey)
         aCoder.encode(icon, forKey: PropertyKey.iconKey)
-
     }
 
     required convenience init?(coder aDecoder: NSCoder) {
@@ -78,5 +81,15 @@ class PlaceDetails: NSObject, NSCoding {
         self.phone = json["formatted_phone_number"] as? String
         self.website = json["website"] as? String
         self.placeId = json["place_id"] as? String
+        
+        if let geometry = json["geometry"] as? [String: Any]
+        {
+            if let location = geometry["location"] as? [String: Any] {
+                if let latitude = location["lat"] as? Double,
+                    let longitude = location["lng"] as? Double {
+                    self.coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                }
+            }
+        }
     }
 }
